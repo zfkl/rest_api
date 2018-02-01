@@ -85,7 +85,7 @@ def populate_event(event_data_dict, event_to_populate, user_id):
         (latitude, longitude) = event_data_dict["gps"]
         event_to_populate.latitude = latitude
         event_to_populate.longitude = longitude
-        event_to_populate.cluster_id = find_my_cluster((latitude, longitude))
+        event_to_populate.cluster_id = find_my_cluster(latitude, longitude)
     except KeyError:
         pass
         #default value set in model already
@@ -122,12 +122,14 @@ def populate_event(event_data_dict, event_to_populate, user_id):
 
     return event_to_populate
 
-def find_my_cluster(my_gps):
-    """my_gps is a coordinate tupple of lat, long
+def find_my_cluster(lati, longi):
+    """lati and longi are coordinates of latitude, longitude
     return int city_cluster
     first, find closest city
     then find closest cluster in the found city
+    find_my_cluster(45.10, -73.30) returns 1 for now
     """
+    my_gps = (lati, longi) #as data in world gps are tupples of lat long
     distance_world = np.zeros(len(WORLD_GPS))
     for index, gps in enumerate(WORLD_GPS):
         distance_world[index] = vincenty(my_gps, gps).km
